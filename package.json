@@ -1,0 +1,25 @@
+{
+  "name": "deephide",
+  "version": "0.0.0",
+  "description": "real-time Node.js/TS system that hides and encrypts file inside an audio file by subtle human speech modulation.",
+  "homepage": "https://github.com/Forgata/deephide#readme",
+  "bugs": {
+    "url": "https://github.com/Forgata/deephide/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Forgata/deephide.git"
+  },
+  "license": "MIT",
+  "author": "Forgata",
+  "type": "module",
+  "main": "src/main.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.3",
+    "nodemon": "^3.1.14",
+    "typescript": "^5.9.3"
+  }
+}
