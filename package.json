@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@picovoice/pvrecorder-node": "^1.2.8",
+    "chalk": "^5.6.2",
     "fft.js": "^4.0.4"
   }
 }
