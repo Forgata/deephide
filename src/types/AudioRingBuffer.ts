@@ -1,0 +1,111 @@
+interface Buffer {
+  peek(): number | undefined;
+  push(item: Int16Array): void;
+  pop(): number | undefined;
+  isEmpty(): boolean;
+  clear(): void;
+  [Symbol.iterator](): Iterator<number>;
+  getFrames(length: number): Float32Array;
+  advance(hopSize: number): void;
+}
+
+export class AudioRingBuffer implements Buffer {
+  private buffer: ArrayBuffer;
+  private f32: Float32Array;
+  private capacity: number;
+  private writePtr: number = 0;
+  private readPtr: number = 0;
+
+  public size: number = 0;
+
+  constructor(capacity: number) {
+    this.capacity = capacity;
+    this.buffer = new ArrayBuffer(capacity * 4);
+    this.f32 = new Float32Array(this.buffer);
+  }
+
+  public *[Symbol.iterator](): Iterator<number> {
+    let count = 0;
+    if (!this.buffer) return;
+    while (count < this.size) {
+      const idx = (this.readPtr + count) % this.capacity;
+      if (idx >= 0 && idx < this.capacity) {
+        yield this.f32[idx]!;
+      }
+      count++;
+    }
+  }
+  public push(frame: Int16Array) {
+    const frameLength = frame.length;
+    const overflow = this.size + frameLength - this.capacity;
+
+    if (overflow > 0) {
+      this.readPtr = (this.readPtr + overflow) % this.capacity;
+      this.size -= overflow;
+    }
+
+    for (let i = 0; i < frameLength; i++) {
+      const index = (this.writePtr + i) % this.capacity;
+      this.f32[index] = frame[i]! / 32768.0;
+    }
+
+    this.writePtr = (this.writePtr + frameLength) % this.capacity;
+    this.size += frameLength;
+  }
+
+  /**
+   * Returns a view of the internal Float32 data.
+   */
+  public peek() {
+    return this.size > 0 ? this.f32[this.readPtr] : undefined;
+  }
+
+  public pop() {
+    if (this.size === 0) return undefined;
+
+    const item = this.f32[this.readPtr];
+    this.readPtr = (this.readPtr + 1) % this.capacity;
+    this.size--;
+    return item;
+  }
+
+  /**
+   * @returns true if the buffer is empty.
+   * @returns false if the buffer not empty.
+   */
+  public isEmpty() {
+    return this.size === 0;
+  }
+
+  /**
+   * Resets the read and write pointers.
+   */
+  public clear() {
+    this.writePtr = 0;
+    this.readPtr = 0;
+    this.size = 0;
+  }
+
+  /**
+   * Retrieves a contiguous Float32Array of a specific length
+   * starting from the current readPtr without removing them.
+   */
+  public getFrames(length: number) {
+    const frame = new Float32Array(length);
+    for (let i = 0; i < length; i++) {
+      const idx = (this.readPtr + i) % this.capacity;
+      frame[i] = this.f32[idx]!;
+    }
+    return frame;
+  }
+
+  /**
+   * Advances the read pointer by the hop size.
+   */
+  public advance(hopSize: number) {
+    this.readPtr = (this.readPtr + hopSize) % this.capacity;
+    this.size = Math.max(0, this.size - hopSize);
+  }
+}
+
+export const buffer = new AudioRingBuffer(4096);
