@@ -18,11 +18,13 @@ export function processSTFT(audioBuffer: AudioRingBuffer) {
     for (let i = 0; i < FRAME_SIZE; i++)
       frames[i] = frames[i]! * HAMMING_WINDOW[i]!;
 
+    console.log("Frame min/max:", Math.min(...frames), Math.max(...frames));
+
     const powerSpectrum = processFFT(frames);
 
-    const bandEnergy = new Float32Array(computeBarkEnergy(powerSpectrum));
+    const bandEnergy = computeBarkEnergy(powerSpectrum);
 
-    const maskingThresholds = new Float32Array(estimateMasking(bandEnergy));
+    const maskingThresholds = estimateMasking(bandEnergy);
 
     const safeBins = identifySafeBins(powerSpectrum, maskingThresholds);
 
@@ -31,8 +33,8 @@ export function processSTFT(audioBuffer: AudioRingBuffer) {
     const map = {
       frameIndex: frameCount++,
       safeBins,
-      bandEnergy,
-      maskingThresholds,
+      bandEnergy: new Float32Array(bandEnergy),
+      maskingThresholds: new Float32Array(maskingThresholds),
     };
 
     maskingMap.push(map);
