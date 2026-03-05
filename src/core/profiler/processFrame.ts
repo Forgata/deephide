@@ -28,7 +28,7 @@ export function processSTFT(audioBuffer: AudioRingBuffer) {
 
     const safeBins = identifySafeBins(powerSpectrum, maskingThresholds);
 
-    // console.log(`Found ${safeBins.length} safe bins for data injection`);
+    console.log(`Found ${safeBins.length} safe bins for data injection`);
 
     const map = {
       frameIndex: frameCount++,
