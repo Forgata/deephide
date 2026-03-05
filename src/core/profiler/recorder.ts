@@ -12,9 +12,21 @@ export async function recorder() {
     while (pvRecorder.isRecording) {
       const frames = await pvRecorder.read();
       buffer.push(frames);
+
+      if (buffer.size >= 1024) {
+        const maskingMap = processSTFT(buffer);
+        if (maskingMap.length > 0) {
+          console.log(
+            "Processed Frame Index:",
+            maskingMap[maskingMap.length - 1]!.frameIndex,
+          );
+          console.log(
+            "Safe Bins:",
+            maskingMap[maskingMap.length - 1]!.safeBins.length,
+          );
+        }
+      }
     }
-    const maskingMap = processSTFT(buffer);
-    console.log(maskingMap);
   } catch (error: unknown) {
     pvRecorder.stop();
     console.error(error);
