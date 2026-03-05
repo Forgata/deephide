@@ -4,7 +4,7 @@ import { initialise } from "./utils/initialise.js";
 try {
   initialise();
 
-  recorder();
+  await recorder();
 } catch (error: unknown) {
   console.error(error);
 }
