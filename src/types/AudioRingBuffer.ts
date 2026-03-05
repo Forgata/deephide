@@ -11,7 +11,6 @@ interface Buffer {
 
 export class AudioRingBuffer implements Buffer {
   private buffer: ArrayBuffer;
-  private i16: Int16Array;
   private f32: Float32Array;
   private capacity: number;
   private writePtr: number = 0;
@@ -22,7 +21,6 @@ export class AudioRingBuffer implements Buffer {
   constructor(capacity: number) {
     this.capacity = capacity;
     this.buffer = new ArrayBuffer(capacity * 4);
-    this.i16 = new Int16Array(this.buffer);
     this.f32 = new Float32Array(this.buffer);
   }
 
@@ -37,27 +35,22 @@ export class AudioRingBuffer implements Buffer {
       count++;
     }
   }
-
   public push(frame: Int16Array) {
     const frameLength = frame.length;
-    if (this.writePtr + frameLength <= this.capacity) {
-      this.i16.set(frame, this.writePtr);
-    } else {
-      const firstPartLen = this.capacity - this.writePtr;
-      this.i16.set(frame.subarray(0, firstPartLen), this.writePtr);
-      this.i16.set(frame.subarray(firstPartLen), 0);
+    const overflow = this.size + frameLength - this.capacity;
+
+    if (overflow > 0) {
+      this.readPtr = (this.readPtr + overflow) % this.capacity;
+      this.size -= overflow;
     }
 
-    for (let i = frameLength - 1; i >= 0; i--) {
-      const idx = (this.writePtr + i) % this.capacity;
-      this.f32[idx] = this.i16[idx]! / 32768.0;
+    for (let i = 0; i < frameLength; i++) {
+      const index = (this.writePtr + i) % this.capacity;
+      this.f32[index] = frame[i]! / 32768.0;
     }
-    const isOverflowing = this.size + frameLength > this.capacity;
 
     this.writePtr = (this.writePtr + frameLength) % this.capacity;
-    this.size = Math.min(this.capacity, this.size + frameLength);
-
-    if (isOverflowing) this.readPtr = this.writePtr;
+    this.size += frameLength;
   }
 
   /**
@@ -115,4 +108,4 @@ export class AudioRingBuffer implements Buffer {
   }
 }
 
-export const buffer = new AudioRingBuffer(1024);
+export const buffer = new AudioRingBuffer(4096);
