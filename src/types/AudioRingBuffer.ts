@@ -5,6 +5,8 @@ interface Buffer {
   isEmpty(): boolean;
   clear(): void;
   [Symbol.iterator](): Iterator<number>;
+  getFrames(length: number): Float32Array;
+  advance(hopSize: number): void;
 }
 
 export class AudioRingBuffer implements Buffer {
@@ -37,8 +39,6 @@ export class AudioRingBuffer implements Buffer {
   }
 
   public push(frame: Int16Array) {
-    // console.log(Math.max(...frame.map(Math.abs)));
-
     const frameLength = frame.length;
     if (this.writePtr + frameLength <= this.capacity) {
       this.i16.set(frame, this.writePtr);
@@ -48,16 +48,10 @@ export class AudioRingBuffer implements Buffer {
       this.i16.set(frame.subarray(firstPartLen), 0);
     }
 
-    // float32 conversion
     for (let i = frameLength - 1; i >= 0; i--) {
       const idx = (this.writePtr + i) % this.capacity;
       this.f32[idx] = this.i16[idx]! / 32768.0;
     }
-
-    // this.writePtr = (this.writePtr + frameLength) % this.capacity;
-    // this.size = Math.min(this.capacity, this.size + frameLength);
-
-    // if (this.size === this.capacity) this.readPtr = this.writePtr;
     const isOverflowing = this.size + frameLength > this.capacity;
 
     this.writePtr = (this.writePtr + frameLength) % this.capacity;
@@ -82,14 +76,42 @@ export class AudioRingBuffer implements Buffer {
     return item;
   }
 
+  /**
+   * @returns true if the buffer is empty.
+   * @returns false if the buffer not empty.
+   */
   public isEmpty() {
     return this.size === 0;
   }
 
+  /**
+   * Resets the read and write pointers.
+   */
   public clear() {
     this.writePtr = 0;
     this.readPtr = 0;
     this.size = 0;
+  }
+
+  /**
+   * Retrieves a contiguous Float32Array of a specific length
+   * starting from the current readPtr without removing them.
+   */
+  public getFrames(length: number) {
+    const frame = new Float32Array(length);
+    for (let i = 0; i < length; i++) {
+      const idx = (this.readPtr + i) % this.capacity;
+      frame[i] = this.f32[idx]!;
+    }
+    return frame;
+  }
+
+  /**
+   * Advances the read pointer by the hop size.
+   */
+  public advance(hopSize: number) {
+    this.readPtr = (this.readPtr + hopSize) % this.capacity;
+    this.size = Math.max(0, this.size - hopSize);
   }
 }
 
