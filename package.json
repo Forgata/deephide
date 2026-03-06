@@ -23,7 +23,10 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@noble/ciphers": "^2.1.1",
+    "@noble/hashes": "^2.0.1",
     "@picovoice/pvrecorder-node": "^1.2.8",
+    "@ronomon/reed-solomon": "^6.0.0",
     "chalk": "^5.6.2",
     "fft.js": "^4.0.4"
   }
