@@ -22,8 +22,6 @@ async function getRSEngine(): Promise<ReedSolomonErasure> {
   return rsInstance;
 }
 
-const RS = require("@ronomon/reed-solomon");
-
 /**
  * Forward Error Correction (FEC)
  *
