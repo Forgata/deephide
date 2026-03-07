@@ -20,7 +20,7 @@ export async function preparePayload(filename: string, password: string) {
 
   const packets = packetize(encrypted, 256);
 
-  const FEC_SHARDS = applyFEC(packets, 6, 3);
+  const FEC_SHARDS = await applyFEC(packets, 6, 3);
 
   const interleaved = interleave(FEC_SHARDS, 6, 3);
 
