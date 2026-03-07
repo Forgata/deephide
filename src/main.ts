@@ -8,7 +8,7 @@ async function start() {
     console.log("Preparing Bit Stream...");
     const { finalBitStream } = await preparePayload("file.txt", "1234");
 
-    await recorder();
+    await recorder(finalBitStream);
   } catch (error: unknown) {
     console.error(error);
   }
