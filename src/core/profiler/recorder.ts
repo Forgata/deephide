@@ -18,16 +18,6 @@ export async function recorder(bitstream: Uint8Array) {
         const maskingMap = processSTFT(buffer);
 
         if (maskingMap.length > 0) {
-          // console.log(
-          //   "Processed Frame Index:",
-          //   maskingMap[maskingMap.length - 1]!.frameIndex,
-          // );
-
-          // console.log(
-          //   "Safe Bins:",
-          //   maskingMap[maskingMap.length - 1]!.safeBins.length,
-          // );
-
           const latestFrame = maskingMap[maskingMap.length - 1]!;
           const safebins = latestFrame.safeBins;
 
