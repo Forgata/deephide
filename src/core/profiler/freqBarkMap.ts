@@ -27,7 +27,6 @@ export function identifySafeBins(
   powerSpectrum: Float32Array,
   thresholds: Float32Array,
 ) {
-  //   let count = 0;
   const result: number[] = [];
 
   for (let i = 0; i < powerSpectrum.length; i++) {
@@ -37,7 +36,6 @@ export function identifySafeBins(
 
     if (binPower < bandThreshold) {
       result.push(i);
-      //   count++;
     }
   }
   return result;
