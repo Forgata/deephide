@@ -23,11 +23,17 @@ export function computeBarkEnergy(powerSpectrum: Float32Array): Float32Array {
   return barkEnergy;
 }
 
+/**
+ * Identify FFT bin indices whose power is below their corresponding Bark-band threshold.
+ *
+ * @param powerSpectrum - Power values for each FFT bin.
+ * @param thresholds - Threshold values for each Bark band (indexed by band); used to compare against each bin's power.
+ * @returns An array of FFT bin indices where the bin power is less than its Bark-band threshold.
+ */
 export function identifySafeBins(
   powerSpectrum: Float32Array,
   thresholds: Float32Array,
 ) {
-  //   let count = 0;
   const result: number[] = [];
 
   for (let i = 0; i < powerSpectrum.length; i++) {
@@ -37,7 +43,6 @@ export function identifySafeBins(
 
     if (binPower < bandThreshold) {
       result.push(i);
-      //   count++;
     }
   }
   return result;

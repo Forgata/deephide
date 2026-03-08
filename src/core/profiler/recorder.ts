@@ -2,9 +2,17 @@ import { PvRecorder } from "@picovoice/pvrecorder-node";
 import { buffer } from "../../types/AudioRingBuffer.js";
 import { processSTFT } from "./processFrame.js";
 
-export async function recorder() {
+/**
+ * Continuously captures microphone audio, analyzes frames for safe frequency bins, and advances through the provided bitstream when safe bins are found.
+ *
+ * The function pushes captured frames into a shared audio buffer, computes a masking map from the buffered audio, and consumes bits from `bitstream` corresponding to detected safe bins while logging progress. The recorder is stopped on error and always released when finished.
+ *
+ * @param bitstream - Sequence of bits to consume/inject when safe frequency bins are detected in the captured audio
+ */
+export async function recorder(bitstream: Uint8Array) {
   const frameSize = 512;
   const pvRecorder = new PvRecorder(frameSize, -1);
+  let bitPtr = 0;
 
   pvRecorder.start();
 
@@ -15,15 +23,28 @@ export async function recorder() {
 
       if (buffer.size >= 1024) {
         const maskingMap = processSTFT(buffer);
+
         if (maskingMap.length > 0) {
+          const latestFrame = maskingMap[maskingMap.length - 1]!;
+          const safebins = latestFrame.safeBins;
+
+          if (safebins.length > 0 && bitPtr < bitstream.length) {
+            for (const bitIndex of safebins) {
+              if (bitPtr >= bitstream.length) break;
+
+              const currentBit = bitstream[bitPtr];
+
+              bitPtr++;
+            }
+          }
+
           console.log(
-            "Processed Frame Index:",
-            maskingMap[maskingMap.length - 1]!.frameIndex,
+            `Frame: ${latestFrame.frameIndex} | Safe Bins: ${safebins.length} | Progress: ${bitPtr}/${bitstream.length} bits`,
           );
-          console.log(
-            "Safe Bins:",
-            maskingMap[maskingMap.length - 1]!.safeBins.length,
-          );
+          if (bitPtr >= bitstream.length) {
+            console.log("SUCCESS! entire bitstream injected");
+            // break;
+          }
         }
       }
     }
