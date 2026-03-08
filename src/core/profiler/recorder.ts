@@ -34,8 +34,10 @@ export async function recorder(bitstream: Uint8Array) {
           console.log(
             `Frame: ${latestFrame.frameIndex} | Safe Bins: ${safebins.length} | Progress: ${bitPtr}/${bitstream.length} bits`,
           );
-          if (bitPtr >= bitstream.length)
+          if (bitPtr >= bitstream.length) {
             console.log("SUCCESS! entire bitstream injected");
+            // break;
+          }
         }
       }
     }
