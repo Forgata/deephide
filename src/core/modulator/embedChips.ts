@@ -20,7 +20,7 @@ export function embedFrameChips(
     const magnitude = Math.sqrt(real * real + imag * imag);
     const originalPhase = Math.atan2(imag, real);
 
-    const newPhase = originalPhase + (chipValue + delta);
+    const newPhase = originalPhase + chipValue * delta;
 
     const newReal = magnitude * Math.cos(newPhase);
     const newImag = magnitude * Math.sin(newPhase);

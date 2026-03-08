@@ -18,7 +18,7 @@ export class PNGenerator {
 
   private nextChip(): number {
     const lsb = this.state & 1;
-    this.state >>> 1;
+    this.state = this.state >>> 1;
 
     if (lsb === 1) this.state ^= this.mask;
     return lsb === 1 ? 1 : -1;
