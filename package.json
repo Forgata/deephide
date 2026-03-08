@@ -15,7 +15,8 @@
   "type": "module",
   "main": "src/main.ts",
   "scripts": {
-    "dev": "nodemon"
+    "build": "tsc",
+    "dev": "npm run build && nodemon"
   },
   "devDependencies": {
     "@types/node": "^25.3.3",
