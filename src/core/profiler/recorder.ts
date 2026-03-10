@@ -2,6 +2,10 @@ import { PvRecorder } from "@picovoice/pvrecorder-node";
 import { buffer } from "../../types/AudioRingBuffer.js";
 import { processSTFT } from "./processFrame.js";
 import { PNGenerator } from "../modulator/pnGen.js";
+import { processIFFT } from "../recombination/ifft.js";
+import { overlapAdd } from "../recombination/reconstructor.js";
+import { floatToInt16 } from "../recombination/pcmConverter.js";
+import { collectOutput, saveWAV } from "../recombination/writer.js";
 
 export async function recorder(bitstream: Uint8Array) {
   const frameSize = 512;
@@ -19,37 +23,23 @@ export async function recorder(bitstream: Uint8Array) {
       if (buffer.size >= 1024) {
         const modifiedFrames = processSTFT(buffer, bitstream, bitPtr, pnGen);
 
-        for (const frame of modifiedFrames)
+        for (const frame of modifiedFrames) {
           console.log(
             `Frame: ${frame.frameIndex} | Progress: ${bitPtr.index}/${bitstream.length}`,
           );
 
-        if (bitPtr.index >= bitstream.length) {
-          console.log("SUCCESS! Payload fully modulated into spectra.");
+          const timeframe = processIFFT(frame.spectrum);
+          const synthFrame = overlapAdd(timeframe);
+          const pcmFrame = floatToInt16(synthFrame);
+
+          collectOutput(pcmFrame);
         }
 
-        // if (maskingMap.length > 0) {
-        //   const latestFrame = maskingMap[maskingMap.length - 1]!;
-        //   const safebins = latestFrame.safeBins;
-
-        //   if (safebins.length > 0 && bitPtr < bitstream.length) {
-        //     for (const bitIndex of safebins) {
-        //       if (bitPtr >= bitstream.length) break;
-
-        //       const currentBit = bitstream[bitPtr];
-
-        //       bitPtr++;
-        //     }
-        //   }
-
-        //   console.log(
-        //     `Frame: ${latestFrame.frameIndex} | Safe Bins: ${safebins.length} | Progress: ${bitPtr}/${bitstream.length} bits`,
-        //   );
-        //   if (bitPtr >= bitstream.length) {
-        //     console.log("SUCCESS! entire bitstream injected");
-        //     // break;
-        //   }
-        // }
+        if (bitPtr.index >= bitstream.length) {
+          console.log("SUCCESS! Payload fully modulated into spectra.");
+          saveWAV("output.wav");
+          pvRecorder.stop();
+        }
       }
     }
   } catch (error: unknown) {
