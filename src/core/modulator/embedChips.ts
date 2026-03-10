@@ -4,7 +4,7 @@
  */
 
 export function embedFrameChips(
-  fftComplex: Float32Array,
+  fftComplex: Float32Array | number[],
   chipMap: Map<number, number>,
   N: number,
   delta: number = 0.02,
@@ -14,6 +14,10 @@ export function embedFrameChips(
   for (const [binIndex, chipValue] of chipMap.entries()) {
     const rIndex = binIndex * 2;
     const iIndex = rIndex + 1;
+
+    if (iIndex >= fftComplex.length) {
+      continue;
+    }
 
     const real = fftComplex[rIndex]!;
     const imag = fftComplex[iIndex]!;
