@@ -9,6 +9,14 @@ import { interleave } from "./fec/interleave.js";
 import { serialiseBits } from "./bitstream/serialiser.js";
 import { injectPreamble } from "./bitstream/preamble.js";
 
+/**
+ * Prepares a payload for transmission by encrypting the contents of a file
+ * with a password-derived key, FEC, interleaving the result, and
+ * injecting a high-entropy sync preamble.
+ * @param {string} filename The name of the file to be transmitted.
+ * @param {string} password The password to be used for key derivation.
+ * @returns {Promise<{finalBitStream: Uint8Array, salt: Uint8Array}>}
+ */
 export async function preparePayload(filename: string, password: string) {
   const rawBytes = await loadFileToUint8(filename);
   const framed = framePayload(rawBytes, filename);

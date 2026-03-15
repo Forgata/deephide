@@ -1,11 +1,11 @@
 import { createCipheriv, randomBytes } from "node:crypto";
 
 /**
- * AES-256-GCM Encryption
  * Encrypts the framed payload and adds the authentication tag.
- * @returns packet of @type Uint8Array
+ * @param {Uint8Array} framedPayload The payload to be encrypted.
+ * @param {Uint8Array} key The 32-byte secret key used for encryption.
+ * @returns {Uint8Array} The encrypted packet including the nonce, ciphertext, and authentication tag.
  */
-
 export function encryptPayload(framedPayload: Uint8Array, key: Uint8Array) {
   const nonce = randomBytes(12);
   const cipher = createCipheriv("aes-256-gcm", key, nonce);

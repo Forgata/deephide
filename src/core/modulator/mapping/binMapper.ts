@@ -6,12 +6,13 @@
 
 export class BinMapper {
   /**
-   * Assigns 64 chips to a randomized subset of safe bins.
+   * Maps 64 chips to a randomized subset of safe FFT bins using the PN-based shuffle.
+   * The mapping is frame-specific and can be reproduced by providing the same seed.
    * @param chips 64 spread chips
-   * @param safeBins List of indices
+   * @param safeBins List of indices of safe FFT bins
    * @param seed Frame-specific or shared seed for shuffling
+   * @returns A map of safe bin indices to chip values
    */
-
   static mapToBins(
     chips: Float32Array,
     safeBins: number[],

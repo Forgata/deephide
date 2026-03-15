@@ -1,8 +1,12 @@
 /**
- * Packetization
- * Slices the encrypted payload into manageable frames with IDs.
+ * Splits the encrypted payload into frames of a specified size (default 512 bytes) and
+ * assigns each frame a unique identifier. The frames are then returned as an array of
+ * Uint8Arrays, where each frame has the following structure: [frameId (4 bytes), chunk (n bytes)]
+ *
+ * @param {Uint8Array} encryptedData - The encrypted payload to be split into frames
+ * @param {number} [frameSize=512] - The size of each frame in bytes
+ * @returns {Uint8Array[]} - An array of frames, each containing a frameId and a chunk of the encrypted data
  */
-
 export function packetize(
   encryptedData: Uint8Array,
   frameSize: number = 512,

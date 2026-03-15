@@ -1,8 +1,11 @@
 /**
- * Spectral Embedding
- * Injects DSSS chips into the FFT spectrum.
+ * Embeds DSSS chips into the FFT spectrum of a frame.
+ * @param fftComplex The complex FFT of the frame to be modified
+ * @param chipMap A map of bin indices to chip values to be embedded
+ * @param N The number of frequency bins in the FFT
+ * @param delta The phase shift in radians per chip
+ * @returns The modified FFT with the chips embedded
  */
-
 export function embedFrameChips(
   fftComplex: Float32Array | number[],
   chipMap: Map<number, number>,

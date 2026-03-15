@@ -6,6 +6,12 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 let rsInstance: ReedSolomonErasure | null = null;
 
+/**
+ * Returns an instance of the Reed-Solomon Erasure algorithm.
+ * If the instance has not been created yet, it will be created by loading the WASM module.
+ * If the WASM file is missing, it will throw an error.
+ * @returns {Promise<ReedSolomonErasure>} A promise which resolves with the instance of the Reed-Solomon Erasure algorithm.
+ */
 export async function getRSEngine(): Promise<ReedSolomonErasure> {
   if (!rsInstance) {
     const pkgPath = require.resolve("@subspace/reed-solomon-erasure.wasm");
@@ -23,15 +29,14 @@ export async function getRSEngine(): Promise<ReedSolomonErasure> {
 }
 
 /**
- * Forward Error Correction (FEC)
- *
- * Groups packets into blocks and adds shard for recovery
- *
- * @param packets
- * @param dataShards
- * @param parityShards
+ * Applies Forward Error Correction (FEC) to a series of packets.
+ * Groups packets into blocks and adds parity shards for recovery.
+ * @param packets - The packets to be encoded
+ * @param dataShards - The number of data shards per block
+ * @param parityShards - The number of parity shard per block (defaults to 3)
+ * @returns A promise resolving to an array of encoded packets
+ * @throws Error if the WASM encoding fails with an internal code
  */
-
 export async function applyFEC(
   packets: Uint8Array[],
   dataShards: number,
