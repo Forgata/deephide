@@ -17,9 +17,16 @@ export function framePayload(filebytes: Uint8Array, filename: string) {
   const packet = new Uint8Array(totalSize);
   const view = new DataView(packet.buffer);
 
-  view.setUint32(4, 0x44484944, false);
-  view.setUint32(4, 0x01);
+  // offset 0-3
+  view.setUint32(0, 0x44484944, false);
+
+  // offset 4
+  view.setUint8(4, 0x01);
+
+  // offset 5
   view.setUint8(5, filenameBytes.length);
+
+  // offset 6-9
   view.setUint32(6, filebytes.length, false);
 
   packet.set(filenameBytes, headerSize);
