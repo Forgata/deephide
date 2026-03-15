@@ -29,6 +29,10 @@ export async function recorder(bitstream: Uint8Array) {
           );
 
           const timeframe = processIFFT(frame.spectrum);
+          console.log(
+            "Frame energy:",
+            timeframe.reduce((a, b) => a + Math.abs(b), 0),
+          );
           const synthFrame = overlapAdd(timeframe);
           const pcmFrame = floatToInt16(synthFrame);
 
