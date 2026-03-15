@@ -14,6 +14,12 @@ for (let i = 0; i < FRAME_SIZE / 2; i++) {
 }
 
 const barkEnergy = new Float32Array(NUM_BARK_BANDS);
+/**
+ * Computes the energy in each bark band by summing up the power in each frequency bin
+ * that maps to the same bark band.
+ * @param {Float32Array} powerSpectrum - the power spectrum of the audio frame
+ * @returns {Float32Array} - an array containing the energy in each bark band
+ */
 export function computeBarkEnergy(powerSpectrum: Float32Array): Float32Array {
   barkEnergy.fill(0);
   for (let i = 0; i < powerSpectrum.length; i++) {
@@ -23,6 +29,14 @@ export function computeBarkEnergy(powerSpectrum: Float32Array): Float32Array {
   return barkEnergy;
 }
 
+/**
+ * Identifies the safe bins in the power spectrum for data injection.
+ * A safe bin is defined as a bin whose power is below the
+ * corresponding masking threshold.
+ * @param {Float32Array} powerSpectrum - the power spectrum of the audio frame
+ * @param {Float32Array} thresholds - the masking thresholds for each bark band
+ * @returns {number[]} - an array of indices of the safe bins in the power spectrum
+ */
 export function identifySafeBins(
   powerSpectrum: Float32Array,
   thresholds: Float32Array,

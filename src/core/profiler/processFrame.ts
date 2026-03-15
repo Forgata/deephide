@@ -14,6 +14,16 @@ interface FrameState {
   count: number;
 }
 
+/**
+ * Process a Short-Time Fourier Transform (STFT) on an audio buffer
+ * to extract chips embedded in the audio signal using DSSS.
+ * @param {AudioRingBuffer} audioBuffer - a ring buffer containing the audio signal
+ * @param {Uint8Array} bitstream - the bitstream containing the data to be injected
+ * @param {{index: number}} bitPtr - the index of the bitstream to read from
+ * @param {PNGenerator} pnGen - the PN generator used to create the chip sequence
+ * @param {FrameState} frameState - the state of the frame counter
+ * @returns {Array<{spectrum: Float32Array, frameIndex: number, safeBins: number[], bandEnergy: Float32Array, maskingThresholds: Float32Array}>} - an array of objects containing the extracted spectrum, frame index, safe bins, band energy, and masking thresholds for each frame
+ */
 export function processSTFT(
   audioBuffer: AudioRingBuffer,
   bitstream: Uint8Array,
