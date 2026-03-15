@@ -16,12 +16,15 @@
   "main": "src/main.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "npm run build && nodemon"
+    "dev": "npm run build && nodemon",
+    "recover": "npm run build && node dist/recover.js",
+    "test": "vitest"
   },
   "devDependencies": {
     "@types/node": "^25.3.3",
     "nodemon": "^3.1.14",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
   },
   "dependencies": {
     "@noble/ciphers": "^2.1.1",
