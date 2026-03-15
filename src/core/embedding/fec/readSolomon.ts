@@ -6,7 +6,7 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 let rsInstance: ReedSolomonErasure | null = null;
 
-async function getRSEngine(): Promise<ReedSolomonErasure> {
+export async function getRSEngine(): Promise<ReedSolomonErasure> {
   if (!rsInstance) {
     const pkgPath = require.resolve("@subspace/reed-solomon-erasure.wasm");
     const pkgDir = path.dirname(pkgPath);
