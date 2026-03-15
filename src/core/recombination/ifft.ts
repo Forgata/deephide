@@ -13,14 +13,12 @@ const outputGain = 0.5;
 
 export function processIFFT(complexSpectrum: Float32Array): Float32Array {
   const outTimeDomain = f.createComplexArray();
-  // const realOutput = new Float32Array(outTimeDomain);
   const realOutput = new Float32Array(FRAME_SIZE);
 
   f.inverseTransform(outTimeDomain, complexSpectrum);
 
   for (let i = 0; i < FRAME_SIZE; i++) {
-    const amplitude = outTimeDomain[i * 2] * outputGain;
-    realOutput[i] = amplitude;
+    realOutput[i] = outTimeDomain[i * 2] / FRAME_SIZE;
   }
 
   return realOutput;
