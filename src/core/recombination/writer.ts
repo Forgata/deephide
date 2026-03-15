@@ -9,13 +9,26 @@ export function collectOutput(pcmFrame: Int16Array): void {
   // newBuffer.set(pcmFrame, pcmAccumulator.length);
   // pcmAccumulator = newBuffer;
 
-  pcmAccumulator.push(pcmFrame.slice());
+  pcmAccumulator.push(new Int16Array(pcmFrame));
 }
 
 export function saveWAV(filename: string = "output.wav"): void {
+  if (pcmAccumulator.length === 0) {
+    console.warn("No data to save.");
+    return;
+  }
+  let totalLength = 0;
+  for (const frame of pcmAccumulator) totalLength += frame.length;
+  const merged = new Int16Array(totalLength);
+
+  let offset = 0;
+  for (const frame of pcmAccumulator) {
+    merged.set(frame, offset);
+    offset += frame.length;
+  }
   const wav = new wavefile.WaveFile();
-  wav.fromScratch(1, 16000, "16", pcmAccumulator);
+  wav.fromScratch(1, 16000, "16", merged);
   fs.writeFileSync(filename, wav.toBuffer());
   console.log(`\n stealth audio saved: ${filename}`);
-  // pcmAccumulator = new Int16Array(0);
+  pcmAccumulator = [];
 }
