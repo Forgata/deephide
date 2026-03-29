@@ -1,10 +1,11 @@
 /**
- * Unpacks an array of interleaved shards into a bitstream.
- * Iterates over each shard and extracts each byte into its constituent bits.
- * The resulting bitstream is a flattened array of bits.
- * @param interleadShards The array of interleaved shard to be unpacked
- * @returns The unpacked bitstream
- */
+ /**
+  * Serialises an array of interleaved shards into a bitstream.
+  * Iterates over each shard and extracts each byte into its constituent bits.
+  * The resulting bitstream is a flattened array of bits.
+  * @param interleadShards The array of interleaved shards to be serialised
+  * @returns The serialised bitstream
+  */
 export function serialiseBits(interleadShards: Uint8Array[]): Uint8Array {
   const totalBytes = interleadShards.reduce(
     (acc, shard) => acc + shard.length,

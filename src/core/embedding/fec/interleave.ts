@@ -1,12 +1,11 @@
 /**
- * Reorders shard so that consecutive physical errors are distributed
+ * Reorders shards so that consecutive physical errors are distributed
  * across different logical RS blocks.
  *
- * @param shard - The shards array to be interleaved
- * @param dataShards - The number of data shard per block
- * @param parityShards - The number of parity shard per block
- * @returns The interleaved shard array
- */
+ * @param shards - The shards array to be interleaved
+ * @param dataShards - The number of data shards per block
+ * @param parityShards - The number of parity shards per block
+ * @returns The interleaved shard array */
 export function interleave(
   shards: Uint8Array[],
   dataShards: number,

@@ -33,7 +33,7 @@ export async function getRSEngine(): Promise<ReedSolomonErasure> {
  * Groups packets into blocks and adds parity shards for recovery.
  * @param packets - The packets to be encoded
  * @param dataShards - The number of data shards per block
- * @param parityShards - The number of parity shard per block (defaults to 3)
+ * @param parityShards - The number of parity shards per block (defaults to 3)
  * @returns A promise resolving to an array of encoded packets
  * @throws Error if the WASM encoding fails with an internal code
  */

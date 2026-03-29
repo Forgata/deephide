@@ -15,13 +15,12 @@ export class Spreader {
 
   /**
    * Generates a PN sequence of the given length using the provided seed.
-   * The generated PN sequence is an array of 64-bit signed integers.
+   * The generated PN sequence is an array of 8-bit signed integers (+1 or -1).
    * The seed value is used to initialize the LFSR.
    * @param length The length of the PN sequence to be generated
    * @param seed The seed value to initialize the LFSR
-   * @returns An array of 64-bit signed integers representing the generated PN sequence
-   */
-  private generatePN(length: number, seed: number): Int8Array {
+   * @returns An Int8Array representing the generated PN sequence
+   */ private generatePN(length: number, seed: number): Int8Array {
     const pn = new Int8Array(length);
     let lfsr = seed || 0xaec2;
 

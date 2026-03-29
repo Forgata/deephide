@@ -5,13 +5,6 @@
 
 export class DSSS_Spreader {
   /**
-   * Spreads a symbol into a chip array.
-   * @param symbol bipolar symbol
-   * @param pnSequence 64-chip PN sequence
-   * @returns Float32Array of 64 spread chips
-   */
-
-  /**
    * Spreads a symbol into a chip array by multiplying it with a PN sequence.
    * @param symbol bipolar symbol to be spread
    * @param pnSequence 64-chip PN sequence to spread the symbol with
