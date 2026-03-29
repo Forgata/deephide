@@ -9,18 +9,14 @@ export function despreadBit(
   complexChips: Float32Array,
   pnSequence: Float32Array,
 ): number {
-  let totalPhaseShift = 0;
+  let totalCorrelation = 0;
 
   for (let i = 0; i < pnSequence.length; i++) {
     const real = complexChips[i * 2]!;
     const imag = complexChips[i * 2 + 1]!;
     const pnChip = pnSequence[i]!;
 
-    const currentPhase = Math.atan2(imag, real);
-
-    const magnitude = Math.sqrt(real * real + imag * imag);
-
-    totalPhaseShift += currentPhase * pnChip * magnitude;
+    totalCorrelation += real * pnChip + imag * pnChip;
   }
-  return totalPhaseShift > 0 ? 1 : 0;
+  return totalCorrelation > 0 ? 1 : 0;
 }
