@@ -22,12 +22,10 @@ describe("File loader", () => {
 
   it("should throw a custom error if the file is missing", async () => {
     vi.mocked(readFile).mockRejectedValue(new Error("ENOENT"));
-    ``;
     await expect(loadFileToUint8("missing.txt")).rejects.toThrow(
       "Failed to read file:",
     );
   });
-
   it("should maintain correct byte offset and length", async () => {
     const raw = new Uint8Array([0, 1, 2, 3]);
     vi.mocked(readFile).mockResolvedValue(Buffer.from(raw.buffer));

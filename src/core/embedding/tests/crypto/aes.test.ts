@@ -19,11 +19,12 @@ describe("Phase 2: AES-256-GCM Encryption", () => {
 
   it("should not contain the plaintext in the ciphertext", () => {
     const encrypted = encryptPayload(mockPayload, mockKey);
-    const encryptedString = new TextDecoder().decode(encrypted);
-
-    expect(encryptedString).not.toContain("Top Secret Data");
+    const ciphertextOnly = encrypted.slice(12); // Skip nonce
+    const containsPlaintext = ciphertextOnly.some((_, i) =>
+      mockPayload.every((byte, j) => ciphertextOnly[i + j] === byte),
+    );
+    expect(containsPlaintext).toBe(false);
   });
-
   it("should have the nonce as the first 12 bytes", () => {
     const encrypted1 = encryptPayload(mockPayload, mockKey);
     const encrypted2 = encryptPayload(mockPayload, mockKey);

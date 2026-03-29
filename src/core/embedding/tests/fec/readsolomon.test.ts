@@ -18,9 +18,10 @@ describe("Phase 2: Reed-Solomon FEC", () => {
     const mockPackets = [data, data, data, data, data, data];
 
     const result = await applyFEC(mockPackets, 6, 3);
-    expect(result[0]).toEqual(data);
+    for (let i = 0; i < 6; i++) {
+      expect(result[i]).toEqual(mockPackets[i]);
+    }
   });
-
   it("should generate non-zero parity shards", async () => {
     const mockPackets = Array.from({ length: 6 }, () =>
       new Uint8Array(256).fill(Math.random() * 255),

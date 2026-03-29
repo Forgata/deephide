@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { deriveKey } from "../../crypto/keyDerivation.js";
 
-describe("Key Derivation wit PBKDF2", () => {
+describe("Key Derivation with PBKDF2", () => {
   const password = "correct-horse-battery-staple";
   const salt = new Uint8Array(16).fill(0xaf);
 

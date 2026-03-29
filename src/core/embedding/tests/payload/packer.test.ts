@@ -16,9 +16,21 @@ describe("Packetization", () => {
     const data = new Uint8Array(100);
     const result = packetize(data, 40);
 
-    const view0 = new DataView(result[0]!!.buffer);
-    const view1 = new DataView(result[1]!!.buffer);
-    const view2 = new DataView(result[2]!!.buffer);
+    const view0 = new DataView(
+      result[0]!!.buffer,
+      result[0]!!.byteOffset,
+      result[0]!!.byteLength,
+    );
+    const view1 = new DataView(
+      result[1]!!.buffer,
+      result[1]!!.byteOffset,
+      result[1]!!.byteLength,
+    );
+    const view2 = new DataView(
+      result[2]!!.buffer,
+      result[2]!!.byteOffset,
+      result[2]!!.byteLength,
+    );
 
     expect(view0.getUint32(0, false)).toBe(0);
     expect(view1.getUint32(0, false)).toBe(1);
