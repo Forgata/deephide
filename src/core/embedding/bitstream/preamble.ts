@@ -1,8 +1,7 @@
 /**
  * Prepends a high-entropy sync pattern to the bitstream.
- * sync pattern is a carefully designed 128-bit sequence
- * It is used to synchronise the receiver
- * @param {Uint8Array} payloadBits The bitstream to be prepended with the sync pattern.
+ * The sync pattern is a carefully designed 80-bit sequence
+ * that is used to synchronize the receiver. * @param {Uint8Array} payloadBits The bitstream to be prepended with the sync pattern.
  * @returns {Uint8Array} The prepended bitstream.
  */
 export function injectPreamble(payloadBits: Uint8Array) {
