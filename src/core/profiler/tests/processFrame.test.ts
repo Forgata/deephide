@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { processSTFT } from "../processFrame.js";
 import { PNGenerator } from "../../modulator/pnGen.js";
+import * as freqBarkMap from "../freqBarkMap.js";
 
 describe("Master Integration: processSTFT", () => {
   const createMockBuffer = (length: number) => {
@@ -38,16 +39,43 @@ describe("Master Integration: processSTFT", () => {
     expect(mockAudio.advance).toHaveBeenCalledWith(512);
   });
 
-  it("should NOT embed data if safeBins are insufficient", () => {
-    const mockAudio = createMockBuffer(1024) as any;
-    const bitstream = new Uint8Array([1]);
-    const bitPtr = { index: 0 };
-    const pnGen = new PNGenerator();
-    const results = processSTFT(mockAudio, bitstream, bitPtr, pnGen);
-    if (results[0]!.safeBins.length >= 64) {
-      expect(bitPtr.index).toBe(1);
-    } else {
+  it("should NOT embed data if safeBins are insufficient (safeBins.length < 64)", () => {
+    const identifySafeBinsSpy = vi
+      .spyOn(freqBarkMap, "identifySafeBins")
+      .mockReturnValue(Array.from(new Uint32Array(32))); // < 64
+
+    try {
+      const mockAudio = createMockBuffer(1024) as any;
+      const bitstream = new Uint8Array([1]);
+      const bitPtr = { index: 0 };
+      const pnGen = new PNGenerator();
+
+      const results = processSTFT(mockAudio, bitstream, bitPtr, pnGen);
+
+      expect(results[0]!.safeBins.length).toBeLessThan(64);
       expect(bitPtr.index).toBe(0);
+    } finally {
+      identifySafeBinsSpy.mockRestore();
+    }
+  });
+
+  it("should embed data if safeBins are sufficient (safeBins.length >= 64)", () => {
+    const identifySafeBinsSpy = vi
+      .spyOn(freqBarkMap, "identifySafeBins")
+      .mockReturnValue(Array.from(new Uint32Array(64))); // >= 64
+
+    try {
+      const mockAudio = createMockBuffer(1024) as any;
+      const bitstream = new Uint8Array([1]);
+      const bitPtr = { index: 0 };
+      const pnGen = new PNGenerator();
+
+      const results = processSTFT(mockAudio, bitstream, bitPtr, pnGen);
+
+      expect(results[0]!.safeBins.length).toBeGreaterThanOrEqual(64);
+      expect(bitPtr.index).toBe(1);
+    } finally {
+      identifySafeBinsSpy.mockRestore();
     }
   });
 
@@ -59,6 +87,7 @@ describe("Master Integration: processSTFT", () => {
       { index: 0 },
       new PNGenerator(),
     );
+    expect(results.length).greaterThanOrEqual(2);
     expect(results[0]).toHaveProperty("spectrum");
     expect(results[0]).toHaveProperty("frameIndex", 0);
     expect(results[1]).toHaveProperty("frameIndex", 1);

@@ -41,5 +41,8 @@ describe("Bin Mapping & Frequency Hopping", () => {
 
     const map = BinMapper.mapToBins(chips, safeBins, 42);
     expect(map.size).toBe(10);
+    for (const binIndex of map.keys()) {
+      expect(safeBins).toContain(binIndex);
+    }
   });
 });
