@@ -6,7 +6,11 @@ describe("Payload Framing Verification", () => {
     const filename = "secret.bin";
     const content = new Uint8Array([0xaa, 0xbb, 0xcc]);
     const result = framePayload(content, filename);
-    const view = new DataView(result.buffer);
+    const view = new DataView(
+      result.buffer,
+      result.byteOffset,
+      result.byteLength,
+    );
 
     expect(view.getUint32(0, false)).toBe(0x44484944);
     expect(result[4]).toBe(1);
